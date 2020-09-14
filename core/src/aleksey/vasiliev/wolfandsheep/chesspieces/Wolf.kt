@@ -8,6 +8,8 @@ class Wolf(wolfNumber: Int): ChessPiece() {
 
     override val coordinates = 0 to wolfNumber
 
+    override var touched: Boolean = false
+
     override val texture: Texture = assetManager["wolf$PNG", Texture::class.java]
 
 }

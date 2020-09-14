@@ -8,6 +8,7 @@ class Sheep : ChessPiece() {
 
     override val coordinates: Pair<Int, Int> = 7 to (0..3).random()
 
-    override val texture: Texture = assetManager["sheep$PNG", Texture::class.java]
+    override var touched: Boolean = false
 
+    override val texture: Texture = assetManager["sheep$PNG", Texture::class.java]
 }

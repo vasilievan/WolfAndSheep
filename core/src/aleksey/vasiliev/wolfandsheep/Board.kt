@@ -18,8 +18,8 @@ class Board {
     private val wolvesAmount = 4
 
     companion object {
-        val beginningHeight = (Gdx.graphics.height - cellWidth * cellsAmount) / 2
-        val beginningWidth = (Gdx.graphics.width - cellWidth * cellsAmount) / 2
+        val beginningHeight = (Gdx.graphics.height - cellWidth * cellsAmount) / 2f
+        val beginningWidth = (Gdx.graphics.width - cellWidth * cellsAmount) / 2f
     }
 
     init {
@@ -34,8 +34,12 @@ class Board {
         wolves.forEach { it.draw(spriteBatch) }
     }
 
+    fun touchDown(screenX: Int, screenY: Int) {
+
+    }
+
     private fun drawBoard(spriteBatch: SpriteBatch) {
-        for (row in 0 until  cellsAmount) {
+        for (row in 0 until cellsAmount) {
             for (column in 0 until cellsAmount) {
                 if ((row + column) % 2 == 0) {
                     spriteBatch.draw(brown, beginningWidth + row * cellWidth,

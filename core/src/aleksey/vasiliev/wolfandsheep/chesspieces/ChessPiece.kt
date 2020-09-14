@@ -11,6 +11,8 @@ abstract class ChessPiece {
 
     abstract val coordinates: Pair<Int, Int>
 
+    abstract var touched: Boolean
+
     fun draw(spriteBatch: SpriteBatch) {
         if (coordinates.first % 2 == 0) {
             spriteBatch.draw(texture, beginningWidth + coordinates.second * cellWidth * 2f,
