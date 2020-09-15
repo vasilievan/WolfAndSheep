@@ -1,7 +1,7 @@
 package aleksey.vasiliev.wolfandsheep.chesspieces
 
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.PNG
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.assetManager
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.PNG
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.assetManager
 import com.badlogic.gdx.graphics.Texture
 
 class Wolf(wolfNumber: Int): ChessPiece() {

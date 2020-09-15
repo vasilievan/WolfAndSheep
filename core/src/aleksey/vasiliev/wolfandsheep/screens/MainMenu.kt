@@ -1,20 +1,21 @@
 package aleksey.vasiliev.wolfandsheep.screens
 
-import aleksey.vasiliev.wolfandsheep.Board
-import aleksey.vasiliev.wolfandsheep.Configuration
+import aleksey.vasiliev.wolfandsheep.helpers.Board
+import aleksey.vasiliev.wolfandsheep.helpers.Configuration
 import aleksey.vasiliev.wolfandsheep.screens.Beginning.Companion.prepareCanvas
+import aleksey.vasiliev.wolfandsheep.screens.Beginning.Companion.yNormalized
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class MainMenu(configuration: Configuration) : Screen, InputAdapter() {
+class MainMenu(private val configuration: Configuration) : Screen, InputAdapter() {
     private lateinit var board: Board
     private val spriteBatch = SpriteBatch()
 
     override fun show() {
         Gdx.input.inputProcessor = this
-        board = Board()
+        board = Board(configuration)
     }
 
     override fun render(delta: Float) {
@@ -25,7 +26,7 @@ class MainMenu(configuration: Configuration) : Screen, InputAdapter() {
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        board.touchDown(screenX, screenY)
+        board.touchDown(screenX.toFloat(), yNormalized(screenY))
         return super.touchDown(screenX, screenY, pointer, button)
     }
 

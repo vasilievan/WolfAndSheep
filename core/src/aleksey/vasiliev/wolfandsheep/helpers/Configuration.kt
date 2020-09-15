@@ -1,4 +1,4 @@
-package aleksey.vasiliev.wolfandsheep
+package aleksey.vasiliev.wolfandsheep.helpers
 
 enum class Configuration {
     SHEEP,

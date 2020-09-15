@@ -1,4 +1,4 @@
-package aleksey.vasiliev.wolfandsheep
+package aleksey.vasiliev.wolfandsheep.helpers
 
 import aleksey.vasiliev.wolfandsheep.screens.Beginning
 import com.badlogic.gdx.Game
@@ -11,9 +11,9 @@ object ResourseContainer : Game() {
     const val JPG = ".jpg"
     const val PNG = ".png"
     const val cellWidth = 128f
-    private val cells = setOf("brown", "ivory")
+    const val cellsAmount = 8
+    private val cells = setOf("brown", "ivory", "chosen")
     private val chessPieces = setOf("sheep", "wolf")
-    val cellsAmount = 8
 
     override fun create() {
         cells.forEach { assetManager.load("$it$JPG", Texture::class.java) }

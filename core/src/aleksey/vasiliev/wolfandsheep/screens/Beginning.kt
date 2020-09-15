@@ -1,10 +1,10 @@
 package aleksey.vasiliev.wolfandsheep.screens
 
-import aleksey.vasiliev.wolfandsheep.Configuration
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.PNG
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.assetManager
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.cellWidth
-import aleksey.vasiliev.wolfandsheep.ResourseContainer.setScreen
+import aleksey.vasiliev.wolfandsheep.helpers.Configuration
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.PNG
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.assetManager
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellWidth
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.Screen
@@ -24,6 +24,7 @@ class Beginning : Screen, InputAdapter() {
             else Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         }
+        fun yNormalized(screenY: Int): Float = (Gdx.graphics.height - screenY).toFloat()
     }
 
     override fun show() {}
@@ -38,16 +39,15 @@ class Beginning : Screen, InputAdapter() {
         if (!loading) {
             prepareCanvas(true)
             spriteBatch.begin()
-            spriteBatch.draw(sheepTexture, Gdx.graphics.width / 2 - cellWidth, Gdx.graphics.height / 2 - cellWidth)
-            spriteBatch.draw(wolfTexture, Gdx.graphics.width / 2 + cellWidth, Gdx.graphics.height / 2 - cellWidth)
+            spriteBatch.draw(sheepTexture, Gdx.graphics.width / 2f - cellWidth, Gdx.graphics.height / 2f - cellWidth)
+            spriteBatch.draw(wolfTexture, Gdx.graphics.width / 2f + cellWidth, Gdx.graphics.height / 2f - cellWidth)
             spriteBatch.end()
         }
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        val yNormalized = (Gdx.graphics.height - screenY).toFloat()
         val heightRange = Gdx.graphics.height / 2f - cellWidth..Gdx.graphics.height / 2f
-        if (yNormalized in heightRange) {
+        if (yNormalized(screenY) in heightRange) {
             if (screenX.toFloat() in Gdx.graphics.width / 2f - cellWidth..Gdx.graphics.width / 2f) setScreen(MainMenu(Configuration.SHEEP))
             if (screenX.toFloat() in Gdx.graphics.width / 2f + cellWidth..Gdx.graphics.width / 2f + cellWidth * 2f) setScreen(MainMenu(Configuration.WOLF))
         }
