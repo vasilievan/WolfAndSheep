@@ -4,6 +4,7 @@ import aleksey.vasiliev.wolfandsheep.helpers.Configuration
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.PNG
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.assetManager
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellWidth
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.configuration
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputAdapter
@@ -47,9 +48,17 @@ class Beginning : Screen, InputAdapter() {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         val heightRange = Gdx.graphics.height / 2f - cellWidth..Gdx.graphics.height / 2f
+        var touched = true
         if (yNormalized(screenY) in heightRange) {
-            if (screenX.toFloat() in Gdx.graphics.width / 2f - cellWidth..Gdx.graphics.width / 2f) setScreen(MainMenu(Configuration.SHEEP))
-            if (screenX.toFloat() in Gdx.graphics.width / 2f + cellWidth..Gdx.graphics.width / 2f + cellWidth * 2f) setScreen(MainMenu(Configuration.WOLF))
+            if (screenX.toFloat() in Gdx.graphics.width / 2f - cellWidth..Gdx.graphics.width / 2f) {
+                configuration = Configuration.SHEEP
+                touched = true
+            }
+            if (screenX.toFloat() in Gdx.graphics.width / 2f + cellWidth..Gdx.graphics.width / 2f + cellWidth * 2f) {
+                configuration = Configuration.WOLF
+                touched = true
+            }
+            if (touched) setScreen(MainMenu())
         }
         return super.touchDown(screenX, screenY, pointer, button)
     }

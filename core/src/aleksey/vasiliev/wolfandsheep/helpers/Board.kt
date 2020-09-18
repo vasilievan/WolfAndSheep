@@ -7,13 +7,17 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
 import aleksey.vasiliev.wolfandsheep.ais.AI
 import aleksey.vasiliev.wolfandsheep.ais.SheepAI
 import aleksey.vasiliev.wolfandsheep.ais.WolfAI
+import aleksey.vasiliev.wolfandsheep.chesspieces.ChessPiece
+import aleksey.vasiliev.wolfandsheep.chesspieces.ChessPiece.Companion.countTextureCoordinates
 import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
 import aleksey.vasiliev.wolfandsheep.chesspieces.Wolf
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.configuration
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.graph
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
-class Board(private val configuration: Configuration) {
+class Board {
     private val brown: Texture
     private val ivory: Texture
     private val chosen: Texture
@@ -46,8 +50,22 @@ class Board(private val configuration: Configuration) {
     }
 
     fun touchDown(screenX: Float, screenY: Float) {
-        if (configuration == Configuration.SHEEP) { sheep.isTouched(screenX, screenY) }
-        else { wolves.forEach { it.isTouched(screenX, screenY) } }
+        if (configuration == Configuration.SHEEP) {
+            graph.options(sheep).forEach {
+                if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
+                    val coordinates = countTextureCoordinates(it)
+                    if (screenX in coordinates.first..coordinates.first + cellWidth &&
+                            screenY in coordinates.second..coordinates.second + cellWidth &&
+                            sheep.touched) {
+                        sheep.move(it)
+                        return
+                    }
+                }
+            }
+            sheep.isTouched(screenX, screenY)
+        } else {
+            wolves.forEach { it.isTouched(screenX, screenY) }
+        }
     }
 
     private fun drawBoard(spriteBatch: SpriteBatch) {
@@ -65,12 +83,18 @@ class Board(private val configuration: Configuration) {
     }
 
     private fun drawChosen(spriteBatch: SpriteBatch) {
-        val coordinates: Pair<Float, Float>? = if (configuration == Configuration.SHEEP && sheep.touched) {
-            sheep.leftCornerCoordinates()
-        } else {
-            wolves.firstOrNull { it.touched }?.leftCornerCoordinates()
+        val chosenOne: ChessPiece? = if (configuration == Configuration.SHEEP && sheep.touched) { sheep }
+        else { wolves.firstOrNull { it.touched } }
+        if (chosenOne != null) {
+            val coordinates = chosenOne.leftCornerCoordinates()
+            spriteBatch.draw(chosen, coordinates.first, coordinates.second)
+            graph.options(chosenOne).forEach {
+                if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
+                    val optionCoordinates = countTextureCoordinates(it)
+                    spriteBatch.draw(chosen, optionCoordinates.first, optionCoordinates.second)
+                }
+            }
         }
-        if (coordinates != null) spriteBatch.draw(chosen, coordinates.first, coordinates.second)
     }
 
     fun dispose() {
