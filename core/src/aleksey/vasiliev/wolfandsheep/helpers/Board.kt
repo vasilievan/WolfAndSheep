@@ -64,6 +64,19 @@ class Board {
             }
             sheep.isTouched(screenX, screenY)
         } else {
+            val touchedWolf = wolves.firstOrNull { it.touched }
+            if (touchedWolf != null) {
+                graph.options(touchedWolf).forEach {
+                    if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
+                        val coordinates = countTextureCoordinates(it)
+                        if (screenX in coordinates.first..coordinates.first + cellWidth &&
+                                screenY in coordinates.second..coordinates.second + cellWidth) {
+                            touchedWolf.move(it)
+                            return
+                        }
+                    }
+                }
+            }
             wolves.forEach { it.isTouched(screenX, screenY) }
         }
     }
