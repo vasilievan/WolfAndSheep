@@ -2,6 +2,7 @@ package aleksey.vasiliev.wolfandsheep.helpers
 
 import aleksey.vasiliev.wolfandsheep.chesspieces.ChessPiece
 import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
+import aleksey.vasiliev.wolfandsheep.chesspieces.Wolf
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
 
 class Graph {
@@ -76,5 +77,10 @@ class Graph {
         } else {
             listOfNotNull(node.ne(), node.nw()).toSet()
         }
+    }
+
+    fun aiWolfOptions(chosenOne: Wolf): Set<Graph.Node> {
+        val node = chosenOne.node
+        return listOfNotNull(node.se(), node.sw()).toSet()
     }
 }

@@ -14,7 +14,11 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
     override fun move() {
         val wolvesPositions = wolves.map { it.node }
         val possibleTurns = graph.options(sheep).filter { it !in wolvesPositions }
-        possibleTurns.forEach { println(it.coordinates) }
+        // 0 or 7
+        if (sheep.node.coordinates.first == 0) {
+            playerWon = false
+            setScreen(TheEnd())
+        }
         if (possibleTurns.isEmpty()) {
             playerWon = true
             setScreen(TheEnd())
