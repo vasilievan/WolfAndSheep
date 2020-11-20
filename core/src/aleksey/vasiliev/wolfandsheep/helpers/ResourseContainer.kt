@@ -2,12 +2,11 @@ package aleksey.vasiliev.wolfandsheep.helpers
 
 import aleksey.vasiliev.wolfandsheep.screens.Beginning
 import com.badlogic.gdx.Game
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
-import java.util.*
 
 object ResourseContainer : Game() {
-
     val assetManager = AssetManager()
     const val JPG = ".jpg"
     const val PNG = ".png"
@@ -17,6 +16,7 @@ object ResourseContainer : Game() {
     private val chessPieces = setOf("sheep", "wolf")
     var configuration: Configuration? = null
     var graph = Graph()
+    var playerWon = false
 
     override fun create() {
         graph.create()

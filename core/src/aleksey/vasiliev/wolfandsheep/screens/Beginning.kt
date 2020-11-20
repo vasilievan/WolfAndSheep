@@ -1,6 +1,7 @@
 package aleksey.vasiliev.wolfandsheep.screens
 
 import aleksey.vasiliev.wolfandsheep.helpers.Configuration
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.PNG
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.assetManager
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellWidth

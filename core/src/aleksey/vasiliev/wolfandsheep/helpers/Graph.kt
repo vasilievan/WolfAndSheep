@@ -6,9 +6,7 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
 
 class Graph {
     val nodes = mutableSetOf<Node>()
-
     inner class Node(val coordinates: Pair<Int, Int>) {
-
         fun ne(): Node? = if (coordinates.first == 7 || coordinates.first % 2 == 1 && coordinates.second == 3) {
              null
         } else {

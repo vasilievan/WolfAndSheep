@@ -39,7 +39,7 @@ class Board {
         ivory = assetManager["ivory$JPG", Texture::class.java]
         chosen = assetManager["chosen$JPG", Texture::class.java]
         sheep = Sheep()
-        ai = if (configuration == Configuration.SHEEP) WolfAI() else SheepAI()
+        ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves) else SheepAI(sheep, wolves)
     }
 
     fun draw(spriteBatch: SpriteBatch) {
@@ -51,33 +51,28 @@ class Board {
 
     fun touchDown(screenX: Float, screenY: Float) {
         if (configuration == Configuration.SHEEP) {
-            graph.options(sheep).forEach {
-                if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
-                    val coordinates = countTextureCoordinates(it)
-                    if (screenX in coordinates.first..coordinates.first + cellWidth &&
-                            screenY in coordinates.second..coordinates.second + cellWidth &&
-                            sheep.touched) {
-                        sheep.move(it)
-                        return
-                    }
-                }
-            }
+            moveTheStuff(sheep, screenX, screenY)
             sheep.isTouched(screenX, screenY)
         } else {
             val touchedWolf = wolves.firstOrNull { it.touched }
             if (touchedWolf != null) {
-                graph.options(touchedWolf).forEach {
-                    if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
-                        val coordinates = countTextureCoordinates(it)
-                        if (screenX in coordinates.first..coordinates.first + cellWidth &&
-                                screenY in coordinates.second..coordinates.second + cellWidth) {
-                            touchedWolf.move(it)
-                            return
-                        }
-                    }
-                }
+                moveTheStuff(touchedWolf, screenX, screenY)
             }
             wolves.forEach { it.isTouched(screenX, screenY) }
+        }
+    }
+
+    private fun moveTheStuff(chessPiece: ChessPiece, screenX: Float, screenY: Float) {
+        graph.options(chessPiece).forEach {
+            if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
+                val coordinates = countTextureCoordinates(it)
+                if (screenX in coordinates.first..coordinates.first + cellWidth &&
+                        screenY in coordinates.second..coordinates.second + cellWidth) {
+                    chessPiece.move(it)
+                    ai.move()
+                    return
+                }
+            }
         }
     }
 
