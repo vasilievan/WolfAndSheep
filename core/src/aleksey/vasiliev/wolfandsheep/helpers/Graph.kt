@@ -4,6 +4,8 @@ import aleksey.vasiliev.wolfandsheep.chesspieces.ChessPiece
 import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
 import aleksey.vasiliev.wolfandsheep.chesspieces.Wolf
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
+import java.lang.Math.pow
+import kotlin.math.pow
 
 class Graph {
     val nodes = mutableSetOf<Node>()
@@ -79,8 +81,5 @@ class Graph {
         }
     }
 
-    fun aiWolfOptions(chosenOne: Wolf): Set<Graph.Node> {
-        val node = chosenOne.node
-        return listOfNotNull(node.se(), node.sw()).toSet()
-    }
+    fun optionsForMinimax(node: Node): MutableList<Graph.Node> = listOfNotNull(node.sw(), node.se(), node.ne(), node.nw()).toMutableList()
 }

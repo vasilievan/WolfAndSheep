@@ -23,7 +23,7 @@ class Beginning : Screen, InputAdapter() {
     companion object {
         fun prepareCanvas(beginning: Boolean) {
             if (beginning) Gdx.gl.glClearColor(0.92f, 0.87f, 0.75f, 1f)
-            else Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
+            else Gdx.gl.glClearColor(0.3f, 0.22f, 0.18f, 1f)
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         }
         fun yNormalized(screenY: Int): Float = (Gdx.graphics.height - screenY).toFloat()
