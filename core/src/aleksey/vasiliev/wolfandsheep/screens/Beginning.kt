@@ -49,7 +49,7 @@ class Beginning : Screen, InputAdapter() {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         val heightRange = Gdx.graphics.height / 2f - cellWidth..Gdx.graphics.height / 2f
-        var touched = true
+        var touched = false
         if (yNormalized(screenY) in heightRange) {
             if (screenX.toFloat() in Gdx.graphics.width / 2f - cellWidth..Gdx.graphics.width / 2f) {
                 configuration = Configuration.SHEEP

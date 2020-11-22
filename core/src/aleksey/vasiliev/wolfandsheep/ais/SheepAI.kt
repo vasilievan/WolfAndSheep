@@ -53,6 +53,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         sheepWon()
     }
 
+    // овечка дошла до конца
     private fun sheepWon() {
         if (sheep.node.coordinates.first == 0) {
             playerWon = false
@@ -60,15 +61,16 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         }
     }
 
+    // у овечки не осталось путей
     private fun playerWon(turns: List<Graph.Node>) {
         if (turns.isEmpty()) {
             playerWon = true
             setScreen(TheEnd())
-            return
         }
     }
 
-    // граф заполняется стоимостями.
+    // подсчитываются стоимости перемещения из заданной ноды в каждую
+    // клетку шахматной доски
     private fun countCost(visited: MutableSet<Graph.Node>,
                           toVisit: MutableSet<Graph.Node>,
                           wolvesPositions: Set<Graph.Node>,

@@ -39,7 +39,7 @@ class Board {
         ivory = assetManager["ivory$JPG", Texture::class.java]
         chosen = assetManager["chosen$JPG", Texture::class.java]
         sheep = Sheep()
-        ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves) else SheepAI(sheep, wolves)
+        ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves.toMutableList()) else SheepAI(sheep, wolves)
     }
 
     fun draw(spriteBatch: SpriteBatch) {
