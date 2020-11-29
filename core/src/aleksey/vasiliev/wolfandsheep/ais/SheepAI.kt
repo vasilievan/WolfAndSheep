@@ -8,10 +8,27 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.playerWon
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
+// Данный класс является реализацией искуственного интеллекта при игре пользователя за волков.
 class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): AI {
+    // Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
+    // оба искуственных интеллекта.
     init {
         move()
     }
+
+    // Используется модификация алгоритма из класса WolfAI.
+    // BFS теперь нужен для расстановки весов нод по степени удаления от овечки.
+    // Результат работы функции countCost - сумма данных весов, а также возможные
+    // варианты по достижению конца доски с соответствующими весами.
+    // Если конец доски достижим, овечка стремится туда.
+    // Иначе выбирается минимальная стоимость, означающая близость овечки
+    // к концу доски и наличие множества свободных ходов.
+
+    // Данный вариант качественно отличается от алгортма Minimax,
+    // предложенного в источниках к курсовой работе, т.к. является гораздо
+    // более производительным, также существена экономия памяти, при этом
+    // результат работы алгоритма приемлем, ИИ побеждает при ошибках пользователя.
+    // При безупречной игре пользователя ИИ проигрывает в 100% случаев.
 
     override fun move() {
         val wolvesPositions = wolves.map { it.node }.toSet()
@@ -26,9 +43,9 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
             countCost(visited, toVisit, wolvesPositions, costs, index, sheep, ends, 1)
         }
         val shortest = ends.min()
-        // если край доски достижим
+        // Если край доски достижим (появилась "брешь" в обороне волков, линия нарушена).
         if (shortest != Int.MAX_VALUE && shortest != null) {
-            // случай, когда овечка в 1 ходе от выигрыша
+            // Случай, когда овечка в 1 ходе от выигрыша.
             if (ends.any { it == 1 }) {
                 val theTurn = turns.firstOrNull {
                     graph.optionsForMinimax(it).any {
@@ -40,7 +57,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
                 sheep.move(turns[ends.indexOfFirst { it == shortest }])
             }
         } else {
-            // иначе выбраю вариант с наименьшей стоимостью
+            // Иначе выбираю вариант с наименьшей стоимостью.
             val minimal = costs.min() ?: playerWon(turns)
             val index = costs.indexOfFirst { it == minimal }
             if (index == -1) {
@@ -53,7 +70,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         sheepWon()
     }
 
-    // овечка дошла до конца
+    // Овечка дошла до конца, поражение пользователя.
     private fun sheepWon() {
         if (sheep.node.coordinates.first == 0) {
             playerWon = false
@@ -61,7 +78,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         }
     }
 
-    // у овечки не осталось путей
+    // У овечки не осталось путей, победа пользователя.
     private fun playerWon(turns: List<Graph.Node>) {
         if (turns.isEmpty()) {
             playerWon = true
@@ -69,8 +86,8 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         }
     }
 
-    // подсчитываются стоимости перемещения из заданной ноды в каждую
-    // клетку шахматной доски
+    // Подсчитываются стоимости перемещения из заданной ноды в каждую
+    // клетку шахматной доски, результат суммируется.
     private fun countCost(visited: MutableSet<Graph.Node>,
                           toVisit: MutableSet<Graph.Node>,
                           wolvesPositions: Set<Graph.Node>,
