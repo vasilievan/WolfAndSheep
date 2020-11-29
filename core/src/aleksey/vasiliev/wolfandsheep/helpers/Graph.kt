@@ -84,7 +84,9 @@ class Graph {
         }
     }
 
+    fun optionsForMinimaxSheep(node: Node): MutableList<Graph.Node> = listOfNotNull(node.ne(), node.nw()).toMutableList()
+
     fun optionsForMinimax(node: Node): MutableList<Graph.Node> = listOfNotNull(node.sw(), node.se(), node.ne(), node.nw()).toMutableList()
 
-    fun optionsForMinimaxWolves(node: Node): List<Graph.Node> = listOfNotNull(node.sw(), node.se()).toList()
+    fun optionsForMinimaxWolf(node: Node): List<Graph.Node> = listOfNotNull(node.sw(), node.se()).toList()
 }

@@ -1,79 +1,116 @@
 package aleksey.vasiliev.wolfandsheep.ais
 import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
 import aleksey.vasiliev.wolfandsheep.chesspieces.Wolf
-import aleksey.vasiliev.wolfandsheep.helpers.Configuration
 import aleksey.vasiliev.wolfandsheep.helpers.Graph
-import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.configuration
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.graph
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.playerWon
+import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
+import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
+// Данный класс является реализацией искуственного интеллекта при игре пользователя за овечку.
 class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : AI {
+    // Класс с данными для обработки исключений. Представлю позицию волков и овечки как пятимерный вектор,
+    // состоящий для удобства восприятия и соблюдения принципов ООП из двух разных объектов.
+    // Дополнительная информация в классе представляет собой порядковый номер волка, который должен ходить,
+    // а также выигрышный ход.
+    data class Case(val wolvesPosition: List<Graph.Node>, val sheepPosition: Graph.Node, val wolfIndex: Int, val turn: Graph.Node)
+
+    // Эвристика проста.
+    // Проверяю все возможные ходы волков на 1 ход вперёд.
+    // Используя поиск в ширину, нахожу позиции для овечки, когда она стоит позади волка
+    // в непосредственной близости и может ходить (назову такое состояние "точка невозрата").
+    // Т.е. цепь волков прорвана.
+    // Выбираю ход, при котором овечке дольше всего бежать до точки невозрата (максимальная глубина
+    // рекурсии при BFS). И хожу так. Очевидно, есть исключения, но их всего 16. Обрабатываю отдельно.
     override fun move() {
-        val maxOrMin = IntArray(1)
-        if (configuration == Configuration.WOLF) maxOrMin[0] = Int.MIN_VALUE else Int.MAX_VALUE
-        val outerIndex = IntArray(1)
-        val turnIndex = IntArray(1)
         val wolvesPositions = wolves.map { it.node }
+        // Обработка специальных случаев.
+        val isSpecialCase = checkInSpecialCases(wolvesPositions, sheep.node)
+        if (isSpecialCase) return
+        // Обработка общих случаев.
         val wolvesTurns = mutableListOf<List<Graph.Node>>()
         wolvesPositions.forEach {
-            val possibleTurns = graph.optionsForMinimaxWolves(it).filter { one -> one !in wolvesPositions && one != sheep.node }
+            val possibleTurns = graph.optionsForMinimaxWolf(it).filter { one -> one !in wolvesPositions && one != sheep.node }
             wolvesTurns.add(possibleTurns)
         }
-        runMinimax(Configuration.WOLF, 0, wolvesPositions, sheep.node, maxOrMin, outerIndex, turnIndex)
-        wolves[outerIndex[0]].move(wolvesTurns[outerIndex[0]][turnIndex[0]])
-    }
-
-    private fun runMinimax(type: Configuration, depth: Int, wolvesPositions: List<Graph.Node>, sheep: Graph.Node, maxOrMin: IntArray, outerIndex: IntArray, turnIndex: IntArray) {
-        if (type == Configuration.WOLF) {
-            if (depth == 0) {
-                for (index in wolvesPositions.indices) {
-                    val possibleTurns = graph.optionsForMinimaxWolves(wolvesPositions[index]).filter { it !in wolvesPositions && it != sheep }
-                    for (innerIndex in possibleTurns.indices) {
-                        val newPosition = wolvesPositions.take(index) + possibleTurns[innerIndex] + wolvesPositions.subList(index + 1, 4) + listOf(graph.Node(index to innerIndex))
-                        runMinimax(Configuration.SHEEP, depth + 1, newPosition, sheep, maxOrMin, outerIndex, turnIndex)
-                    }
-                }
-            }
-            for (index in 0..wolvesPositions.size - 2) {
-                val possibleTurns = graph.optionsForMinimaxWolves(wolvesPositions[index]).filter { it !in wolvesPositions && it != sheep }
-                for (innerIndex in possibleTurns.indices) {
-                    val newPosition = wolvesPositions.take(index) + possibleTurns[innerIndex] + wolvesPositions.subList(index + 1, 4) + wolvesPositions.last()
-                    if (depth < 6) {
-                        runMinimax(Configuration.SHEEP, depth + 1, newPosition, sheep, maxOrMin, outerIndex, turnIndex)
-                    } else {
-                        val result = countCost(mutableSetOf(), listOf(sheep), newPosition.subList(0, 4), 0, 1)
-                        if (result > maxOrMin[0]) {
-                            maxOrMin[0] = result
-                            outerIndex[0] = wolvesPositions.last().coordinates.first
-                            turnIndex[0] = wolvesPositions.last().coordinates.second
-                        }
-                    }
-                }
-            }
-        } else {
-            val possibleTurns = graph.optionsForMinimax(sheep).filter { it !in wolvesPositions }
-            for (innerIndex in possibleTurns.indices) {
-                if (depth < 6) {
-                    runMinimax(Configuration.WOLF, depth + 1, wolvesPositions, possibleTurns[innerIndex], maxOrMin, outerIndex, turnIndex)
-                } else {
-                    val result = countCost(mutableSetOf(), listOf(possibleTurns[innerIndex]), wolvesPositions.subList(0, 4), 0,1)
-                    if (result < maxOrMin[0]) {
-                        maxOrMin[0] = result
-                    }
+        // Нахождение максимального расстояния среди возможных позиций волков с использованием
+        // стандартного алгоритма.
+        var maximum = Int.MIN_VALUE
+        var toGo = -1 to -1
+        for (index in wolvesTurns.indices) {
+            for (innerIndex in wolvesTurns[index].indices) {
+                val position = wolvesPositions.take(index) + wolvesTurns[index][innerIndex] + wolvesPositions.subList(index + 1, 4)
+                val cost = countCost(mutableSetOf(), listOf(sheep.node), position, 1)
+                if (cost > maximum) {
+                    maximum = cost
+                    toGo = index to innerIndex
                 }
             }
         }
+        // Этот случай не наступит в штатном режиме, но будет означать победу игрока. Добавлен для сохранения
+        // аналогии с классом SheepAI.
+        if (toGo == -1 to -1) {
+            playerWon = true
+            setScreen(TheEnd())
+        }
+        wolves[toGo.first].move(wolvesTurns[toGo.first][toGo.second])
+        val possibleTurns = graph.optionsForMinimax(sheep.node).filter { it !in wolves.map { one -> one.node } }
+        if (possibleTurns.isEmpty()) {
+            playerWon = false
+            setScreen(TheEnd())
+        }
     }
+
+
 
     private fun countCost(visited: MutableSet<Graph.Node>,
                                   toVisit: List<Graph.Node>,
                                   wolvesPositions: List<Graph.Node>,
-                                  cost: Int,
                                   depth: Int): Int {
         visited.addAll(toVisit)
         val turns = mutableSetOf<Graph.Node>()
         toVisit.forEach { turns.addAll(graph.optionsForMinimax(it)) }
         val found = turns.filter { one -> one !in wolvesPositions && one !in visited }
-        if (found.isEmpty()) return cost
-        return countCost(visited, found, wolvesPositions, cost + found.size * depth, depth + 1)
+        if (found.isEmpty()) return Int.MAX_VALUE
+        for (wolf in wolvesPositions) {
+            for (sheepTurn in found) {
+                if (sheepTurn in graph.optionsForMinimaxSheep(wolf)) {
+                    val possibleMoves = graph.optionsForMinimaxSheep(sheepTurn).filter { it !in wolvesPositions }
+                    if (possibleMoves.isNotEmpty()) return depth
+                }
+            }
+        }
+        return countCost(visited, found, wolvesPositions, depth + 1)
+    }
+
+    // существует конечное множество из 16 случаев, не покрываемое основной эвристикой
+    // их обработаю отдельно
+    private val specialCases = mutableSetOf(
+            Case(listOf(graph.Node(5 to 0), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(6 to 3)), graph.Node(5 to 2), 0, graph.Node(4 to 1)),
+            Case(listOf(graph.Node(5 to 0), graph.Node(6 to 1), graph.Node(6 to 2), graph.Node(7 to 3)), graph.Node(5 to 2), 3, graph.Node(6 to 3)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(6 to 3)), graph.Node(4 to 2), 3, graph.Node(5 to 2)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(5 to 2)), graph.Node(3 to 2), 3, graph.Node(4 to 3)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(5 to 2), graph.Node(4 to 3)), graph.Node(3 to 1), 2, graph.Node(4 to 2)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(4 to 3)), graph.Node(2 to 1), 0, graph.Node(3 to 0)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(5 to 2)), graph.Node(3 to 1), 3, graph.Node(4 to 2)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(3 to 2)), graph.Node(1 to 3), 3, graph.Node(2 to 3)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(4 to 3)), graph.Node(2 to 1), 0, graph.Node(3 to 0)),
+            Case(listOf(graph.Node(3 to 0), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(4 to 3)), graph.Node(3 to 1), 1, graph.Node(4 to 1)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(4 to 2)), graph.Node(2 to 1), 0, graph.Node(3 to 0)),
+            Case(listOf(graph.Node(3 to 1), graph.Node(4 to 2), graph.Node(5 to 2), graph.Node(4 to 3)), graph.Node(1 to 1), 0, graph.Node(2 to 1)),
+            Case(listOf(graph.Node(2 to 1), graph.Node(4 to 2), graph.Node(5 to 2), graph.Node(4 to 3)), graph.Node(2 to 2), 1, graph.Node(3 to 1)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(3 to 2)), graph.Node(1 to 2), 3, graph.Node(2 to 3)),
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(2 to 2)), graph.Node(2 to 1), 0, graph.Node(3 to 0))
+    )
+
+    private fun checkInSpecialCases(wolvesPosition: List<Graph.Node>, sheepPosition: Graph.Node): Boolean {
+        for (case in specialCases) {
+            if (case.wolvesPosition.zip(wolvesPosition).all { (first, second) -> first == second && sheepPosition == case.sheepPosition}) {
+                wolves[case.wolfIndex].move(case.turn)
+                return true
+            }
+        }
+        return false
     }
 }
+
