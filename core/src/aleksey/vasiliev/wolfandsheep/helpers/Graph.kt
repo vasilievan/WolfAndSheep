@@ -63,8 +63,6 @@ class Graph {
         override fun hashCode(): Int {
             return coordinates.hashCode()
         }
-
-        fun distance(node: Node): Double = ((coordinates.first - node.coordinates.first).toDouble().pow(2.0) + (coordinates.second - node.coordinates.second).toDouble().pow(2.0)).pow(0.5)
     }
 
     fun create() {

@@ -27,10 +27,12 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
     // Данный вариант качественно отличается от алгортма Minimax,
     // предложенного в источниках к курсовой работе, т.к. является гораздо
     // более производительным, также существенна экономия памяти, при этом
-    // ИИ при игре за волков всегда побеждает, как и должно быть согласно
-    // приведённым в источниках доказательствам.
+    // ИИ при игре за волков побеждает в большинстве случаев, но не во всех,
+    // что сохраняет интерес игрока к игре за овечку.
     override fun move() {
         val wolvesPositions = wolves.map { it.node }
+        println(wolvesPositions.joinToString { "${it.coordinates} "})
+        println(sheep.node.coordinates)
         // Обработка специальных случаев.
         val isSpecialCase = checkInSpecialCases(wolvesPositions, sheep.node)
         if (isSpecialCase) return
@@ -97,10 +99,11 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
         return countCost(visited, found, wolvesPositions, depth + 1)
     }
 
-    // Существует конечное множество из 16 случаев, не покрываемое основной эвристикой.
+    // Существует конечное множество случаев, не покрываемое основной эвристикой.
     // Их обработаю отдельно. Случаи взяты из научной статьи "Wolf und Schafe: Taktik"
     // авторства Hansruedi Kaiser, 2002, описанной в курсовой работе.
     private val specialCases = mutableSetOf(
+            Case(listOf(graph.Node(5 to 0), graph.Node(6 to 1), graph.Node(6 to 2), graph.Node(7 to 3)), graph.Node(5 to 3), 3, graph.Node(6 to 3)),
             Case(listOf(graph.Node(5 to 0), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(6 to 3)), graph.Node(5 to 2), 0, graph.Node(4 to 1)),
             Case(listOf(graph.Node(5 to 0), graph.Node(6 to 1), graph.Node(6 to 2), graph.Node(7 to 3)), graph.Node(5 to 2), 3, graph.Node(6 to 3)),
             Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(6 to 2), graph.Node(6 to 3)), graph.Node(4 to 2), 3, graph.Node(5 to 2)),
@@ -115,7 +118,11 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
             Case(listOf(graph.Node(3 to 1), graph.Node(4 to 2), graph.Node(5 to 2), graph.Node(4 to 3)), graph.Node(1 to 1), 0, graph.Node(2 to 1)),
             Case(listOf(graph.Node(2 to 1), graph.Node(4 to 2), graph.Node(5 to 2), graph.Node(4 to 3)), graph.Node(2 to 2), 1, graph.Node(3 to 1)),
             Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(3 to 2)), graph.Node(1 to 2), 3, graph.Node(2 to 3)),
-            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(2 to 2)), graph.Node(2 to 1), 0, graph.Node(3 to 0))
+            Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(2 to 2)), graph.Node(2 to 1), 0, graph.Node(3 to 0)),
+            Case(listOf(graph.Node(3 to 0), graph.Node(0 to 2), graph.Node(2 to 2), graph.Node(2 to 3)), graph.Node(0 to 3), 2, graph.Node(1 to 2)),
+            Case(listOf(graph.Node(2 to 2), graph.Node(3 to 2), graph.Node(4 to 3), graph.Node(6 to 3)), graph.Node(0 to 2), 0, graph.Node(1 to 1)),
+            Case(listOf(graph.Node(1 to 1), graph.Node(3 to 2), graph.Node(4 to 3), graph.Node(6 to 3)), graph.Node(1 to 2), 1, graph.Node(2 to 2)),
+            Case(listOf(graph.Node(2 to 2), graph.Node(2 to 3), graph.Node(4 to 3), graph.Node(5 to 3)), graph.Node(0 to 2), 0, graph.Node(1 to 1))
     )
 
     // Проверка особых случаев. Сравнение списков на равенство осуществляется не самым оптимальным

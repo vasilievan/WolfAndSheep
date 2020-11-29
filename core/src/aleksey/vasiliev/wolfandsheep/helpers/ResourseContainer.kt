@@ -2,10 +2,10 @@ package aleksey.vasiliev.wolfandsheep.helpers
 
 import aleksey.vasiliev.wolfandsheep.screens.Beginning
 import com.badlogic.gdx.Game
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
 
+// Класс-хранилище объектов, используемых как глобальные.
 object ResourseContainer : Game() {
     val assetManager = AssetManager()
     const val JPG = ".jpg"
@@ -18,6 +18,7 @@ object ResourseContainer : Game() {
     var graph = Graph()
     var playerWon = false
 
+    // Инициализация игры, создание графа, подготока ресурсов.
     override fun create() {
         graph.create()
         cells.forEach { assetManager.load("$it$JPG", Texture::class.java) }
