@@ -20,7 +20,6 @@ class TheEnd : Screen, InputAdapter() {
 
     override fun show() {
         Gdx.input.inputProcessor = this
-        bitmapFont.setColor(0f, 0f, 0f, 1f)
     }
 
     override fun render(delta: Float) {
@@ -42,7 +41,7 @@ class TheEnd : Screen, InputAdapter() {
         val generator = FreeTypeFontGenerator(Gdx.files.internal("Arkhip.ttf"))
         val parameter: FreeTypeFontGenerator.FreeTypeFontParameter = FreeTypeFontGenerator.FreeTypeFontParameter()
         parameter.size = (130f / (2130f / Gdx.graphics.width.toFloat())).toInt()
-        parameter.color = Color.BLACK
+        parameter.color = Color(0.92f, 0.87f, 0.75f, 1f)
         bitmapFont = generator.generateFont(parameter)
         generator.dispose()
         return bitmapFont

@@ -5,6 +5,7 @@ import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
 import aleksey.vasiliev.wolfandsheep.chesspieces.Wolf
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
 import java.lang.Math.pow
+import kotlin.math.abs
 import kotlin.math.pow
 
 class Graph {
@@ -62,6 +63,8 @@ class Graph {
         override fun hashCode(): Int {
             return coordinates.hashCode()
         }
+
+        fun distance(node: Node): Double = ((coordinates.first - node.coordinates.first).toDouble().pow(2.0) + (coordinates.second - node.coordinates.second).toDouble().pow(2.0)).pow(0.5)
     }
 
     fun create() {
@@ -83,5 +86,5 @@ class Graph {
 
     fun optionsForMinimax(node: Node): MutableList<Graph.Node> = listOfNotNull(node.sw(), node.se(), node.ne(), node.nw()).toMutableList()
 
-    fun optionsForMinimaxWolves(node: Node): List<Graph.Node> = listOfNotNull(node.se(), node.sw()).toList()
+    fun optionsForMinimaxWolves(node: Node): List<Graph.Node> = listOfNotNull(node.sw(), node.se()).toList()
 }
