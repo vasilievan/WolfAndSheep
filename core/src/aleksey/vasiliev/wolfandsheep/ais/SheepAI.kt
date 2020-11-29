@@ -10,6 +10,7 @@ import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
 // Данный класс является реализацией искуственного интеллекта при игре пользователя за волков.
 class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): AI {
+
     // Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
     // оба искуственных интеллекта.
     init {
@@ -29,7 +30,6 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
     // более производительным, также существена экономия памяти, при этом
     // результат работы алгоритма приемлем, ИИ побеждает при ошибках пользователя.
     // При безупречной игре пользователя ИИ проигрывает в 100% случаев.
-
     override fun move() {
         val wolvesPositions = wolves.map { it.node }.toSet()
         val turns = graph.optionsForMinimax(sheep.node).filter { it !in wolvesPositions }

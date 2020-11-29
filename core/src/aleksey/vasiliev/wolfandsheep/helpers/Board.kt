@@ -94,7 +94,7 @@ class Board {
         val chosenOne: ChessPiece? = if (configuration == Configuration.SHEEP && sheep.touched) { sheep }
         else { wolves.firstOrNull { it.touched } }
         if (chosenOne != null) {
-            val coordinates = chosenOne.leftCornerCoordinates()
+            val coordinates = countTextureCoordinates(chosenOne.node)
             spriteBatch.draw(chosen, coordinates.first, coordinates.second)
             graph.options(chosenOne).forEach {
                 if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {

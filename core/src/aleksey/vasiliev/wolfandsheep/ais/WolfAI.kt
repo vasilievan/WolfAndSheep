@@ -9,6 +9,7 @@ import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
 // Данный класс является реализацией искуственного интеллекта при игре пользователя за овечку.
 class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : AI {
+
     // Класс с данными для обработки исключений. Представлю позицию волков и овечки как пятимерный вектор,
     // состоящий для удобства восприятия и соблюдения принципов ООП из двух разных объектов.
     // Дополнительная информация в классе представляет собой порядковый номер волка, который должен ходить,
@@ -70,7 +71,6 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
         }
     }
 
-
     // Рекурсивная реализация поиска в ширину.
     private fun countCost(visited: MutableSet<Graph.Node>,
                                   toVisit: List<Graph.Node>,
@@ -118,6 +118,8 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
             Case(listOf(graph.Node(4 to 1), graph.Node(5 to 1), graph.Node(4 to 2), graph.Node(2 to 2)), graph.Node(2 to 1), 0, graph.Node(3 to 0))
     )
 
+    // Проверка особых случаев. Сравнение списков на равенство осуществляется не самым оптимальным
+    // алгоритмов, но с использованием функций высшего порядка, что облегчает чтение кода.
     private fun checkInSpecialCases(wolvesPosition: List<Graph.Node>, sheepPosition: Graph.Node): Boolean {
         for (case in specialCases) {
             if (case.wolvesPosition.zip(wolvesPosition).all { (first, second) -> first == second && sheepPosition == case.sheepPosition}) {
