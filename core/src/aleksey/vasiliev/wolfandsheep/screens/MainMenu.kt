@@ -12,11 +12,13 @@ class MainMenu : Screen, InputAdapter() {
     private lateinit var board: Board
     private val spriteBatch = SpriteBatch()
 
+    // Привязка к данному окну обработчика событий, инициализация доски.
     override fun show() {
         Gdx.input.inputProcessor = this
         board = Board()
     }
 
+    // Функция отрисовки, выполняется столько раз в секунду, сколько fps у движка на устройстве.
     override fun render(delta: Float) {
         prepareCanvas(false)
         spriteBatch.begin()
@@ -24,11 +26,13 @@ class MainMenu : Screen, InputAdapter() {
         spriteBatch.end()
     }
 
+    // Обработка нажатия на доску.
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         board.touchDown(screenX.toFloat(), yNormalized(screenY))
         return super.touchDown(screenX, screenY, pointer, button)
     }
 
+    // Освобождение графических ресурсов.
     override fun dispose() {
         spriteBatch.dispose()
         board.dispose()

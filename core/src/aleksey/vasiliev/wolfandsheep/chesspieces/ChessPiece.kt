@@ -10,9 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 // Абстрактный класс, описывающий шахматные фигуры.
 abstract class ChessPiece {
     companion object {
-        /* Функция, необходимая для обеспечения отрисовки согласно конфигурации
-        графа.
-        */
+
+        // Функция, необходимая для обеспечения отрисовки согласно конфигурации графа.
         fun countTextureCoordinates(node: Graph.Node): Pair<Float, Float> {
             return if (node.coordinates.first % 2 == 0) {
                 beginningWidth + node.coordinates.second * cellWidth * 2f to beginningHeight + node.coordinates.first * cellWidth

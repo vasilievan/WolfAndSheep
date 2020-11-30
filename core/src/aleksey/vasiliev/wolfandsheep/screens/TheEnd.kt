@@ -12,16 +12,19 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 
+/* Класс, представляющий собой окно, которое видит пользователь по окончании игры.
+Пользователю показано состояние, выиграл он - "You won!" или проиграл - "You lose!".
+По нажатию запускается класс Beginning, игра начинается сначала.
+*/
 class TheEnd : Screen, InputAdapter() {
     private val spriteBatch = SpriteBatch()
     private var bitmapFont = BitmapFont()
     private val won = "You won!"
     private val lose = "You lose!"
 
-    override fun show() {
-        Gdx.input.inputProcessor = this
-    }
+    override fun show() { Gdx.input.inputProcessor = this }
 
+    // Функция отрисовки, выполняется столько раз в секунду, сколько fps у движка на устройстве.
     override fun render(delta: Float) {
         prepareCanvas(false)
         spriteBatch.begin()
@@ -37,6 +40,7 @@ class TheEnd : Screen, InputAdapter() {
         spriteBatch.end()
     }
 
+    // Создание надписи с информацией о победе/поражении.
     private fun labelMaker(): BitmapFont {
         val generator = FreeTypeFontGenerator(Gdx.files.internal("Arkhip.ttf"))
         val parameter: FreeTypeFontGenerator.FreeTypeFontParameter = FreeTypeFontGenerator.FreeTypeFontParameter()
@@ -47,11 +51,13 @@ class TheEnd : Screen, InputAdapter() {
         return bitmapFont
     }
 
+    // Переход в начальное состояние по нажатию.
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         setScreen(Beginning())
         return super.touchDown(screenX, screenY, pointer, button)
     }
 
+    // Освобождение графических ресурсов.
     override fun dispose() {
         bitmapFont.dispose()
         spriteBatch.dispose()

@@ -15,7 +15,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
  * Овца всегда ходит первой, может ходить в людом направлении по диагонали на одну клетку.
  * Волки могут ходить по диагонали только вперёд относительно движения на одну клетку.
  *
- * Приложение имеет минималистичный дизайн.
+ * Приложение имеет минималистичный дизайн, реализована архитектура MVVM.
  *
  * В реализации были использованы такие структуры данных как граф, из алгоритмов - поиск в
  * ширину, поиск длины кратчайшего пути между вершинами графа и другие графовые алгоритмы.
@@ -24,6 +24,8 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
  * @version     1.1
  * @since       1.1
  */
+
+// License: https://www.apache.org/licenses/LICENSE-2.0
 
 class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
