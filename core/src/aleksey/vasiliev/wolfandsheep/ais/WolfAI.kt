@@ -30,6 +30,11 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
     // ИИ при игре за волков побеждает в большинстве случаев, но не во всех,
     // что сохраняет интерес игрока к игре за овечку.
     override fun move() {
+        // Возможна победа игрока.
+        if (sheep.node.coordinates.first == 7) {
+            playerWon = true
+            setScreen(TheEnd())
+        }
         val wolvesPositions = wolves.map { it.node }
         println(wolvesPositions.joinToString { "${it.coordinates} "})
         println(sheep.node.coordinates)
