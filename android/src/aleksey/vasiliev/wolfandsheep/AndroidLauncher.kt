@@ -33,4 +33,6 @@ class AndroidLauncher : AndroidApplication() {
         val config = AndroidApplicationConfiguration()
         initialize(ResourseContainer, config)
     }
+
+    override fun onBackPressed() {}
 }
