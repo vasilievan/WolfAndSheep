@@ -40,6 +40,7 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
         if (sheep.node.coordinates.first == 7) {
             playerWon = true
             setScreen(TheEnd())
+            return
         }
         val wolvesPositions = wolves.map { it.node }
         // Обработка специальных случаев.
@@ -72,6 +73,7 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
         if (toGo == -1 to -1) {
             playerWon = true
             setScreen(TheEnd())
+            return
         }
         // Перемещение на найденную ноду.
         wolves[toGo.first].move(wolvesTurns[toGo.first][toGo.second])
