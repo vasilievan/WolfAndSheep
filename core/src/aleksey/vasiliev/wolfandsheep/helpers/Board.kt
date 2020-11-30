@@ -25,7 +25,7 @@ class Board {
     private val ivory: Texture
     private val chosen: Texture
     private val sheep: Sheep
-    private val wolves: MutableSet<Wolf> = mutableSetOf()
+    private val wolves = mutableListOf<Wolf>()
     private val wolvesAmount = 4
     private val ai: AI
 
@@ -45,7 +45,7 @@ class Board {
         ivory = assetManager["ivory$JPG", Texture::class.java]
         chosen = assetManager["chosen$JPG", Texture::class.java]
         sheep = Sheep()
-        ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves.toMutableList()) else SheepAI(sheep, wolves)
+        ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves) else SheepAI(sheep, wolves)
     }
 
     // Общий метод отрисовки всей доски вместе с объектами.

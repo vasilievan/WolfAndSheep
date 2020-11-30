@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture
 
 // Класс-хранилище объектов, используемых как глобальные.
 object ResourseContainer : Game() {
-    val assetManager = AssetManager()
+    var assetManager = AssetManager()
     const val JPG = ".jpg"
     const val PNG = ".png"
     const val cellWidth = 128f

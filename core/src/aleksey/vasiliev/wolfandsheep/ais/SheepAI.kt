@@ -9,7 +9,7 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
 // Данный класс является реализацией искуственного интеллекта при игре пользователя за волков.
-class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>) : AI {
+class SheepAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : AI {
 
     /* Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
     оба искуственных интеллекта.
@@ -47,7 +47,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>) : 
             toVisit.add(sheep.node)
             countCost(visited, toVisit, wolvesPositions, costs, index, sheep, ends, 1)
         }
-        val shortest = ends.min()
+        val shortest = ends.minOrNull()
         // Если край доски достижим (появилась "брешь" в обороне волков, линия нарушена).
         if (shortest != Int.MAX_VALUE && shortest != null) {
             // Случай, когда овечка в 1 ходе от выигрыша.
@@ -63,7 +63,7 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>) : 
             }
         } else {
             // Иначе выбираю вариант с наименьшей стоимостью.
-            val minimal = costs.min() ?: playerWon(turns)
+            val minimal = costs.minOrNull() ?: playerWon(turns)
             val index = costs.indexOfFirst { it == minimal }
             if (index == -1) {
                 playerWon = true
