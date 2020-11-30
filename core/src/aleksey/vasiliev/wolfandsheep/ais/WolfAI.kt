@@ -31,6 +31,9 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
     более производительным, также существенна экономия памяти, при этом
     ИИ при игре за волков побеждает в большинстве случаев, но не во всех,
     что сохраняет интерес игрока к игре за овечку.
+
+    Сложность алгоритма - O(v + e), где v - к-во вершин графа, e - к-во рёбер (соседей данной вершины).
+    Память - O(v), v - к-во вершин графа.
     */
     override fun move() {
         // Возможна победа игрока.
@@ -39,8 +42,6 @@ class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : 
             setScreen(TheEnd())
         }
         val wolvesPositions = wolves.map { it.node }
-        println(wolvesPositions.joinToString { "${it.coordinates} " })
-        println(sheep.node.coordinates)
         // Обработка специальных случаев.
         val isSpecialCase = checkInSpecialCases(wolvesPositions, sheep.node)
         if (isSpecialCase) return
