@@ -17,6 +17,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
+/* Класс, описывающий шахматную доску. Является связующим звеном между логикой приложения
+и отрисовкой.
+*/
 class Board {
     private val brown: Texture
     private val ivory: Texture
@@ -31,6 +34,9 @@ class Board {
         val beginningWidth = (Gdx.graphics.width - cellWidth * cellsAmount) / 2f
     }
 
+    /* При создании шахматной доски, создаются объекты: волки и овечка,
+    и соответстующий текущей конфигурации искуственный интеллект.
+    */
     init {
         for (wolfNumber in 0 until wolvesAmount) {
             wolves.add(Wolf(wolfNumber))
@@ -42,6 +48,7 @@ class Board {
         ai = if (configuration == Configuration.SHEEP) WolfAI(sheep, wolves.toMutableList()) else SheepAI(sheep, wolves)
     }
 
+    // Общий метод отрисовки всей доски вместе с объектами.
     fun draw(spriteBatch: SpriteBatch) {
         drawBoard(spriteBatch)
         drawChosen(spriteBatch)
@@ -49,11 +56,16 @@ class Board {
         wolves.forEach { it.draw(spriteBatch) }
     }
 
+    // Обработка событий нажатия на экран.
     fun touchDown(screenX: Float, screenY: Float) {
         if (configuration == Configuration.SHEEP) {
+            /* Для овцы нет неоднозначности при ходе, если она может переместиться на
+            указанную клетку, перемещается.
+            */
             moveTheStuff(sheep, screenX, screenY)
             sheep.isTouched(screenX, screenY)
         } else {
+            // Для волков есть недоднозначность, какой должен ходить. Устаню её.
             val touchedWolf = wolves.firstOrNull { it.touched }
             if (touchedWolf != null) {
                 moveTheStuff(touchedWolf, screenX, screenY)
@@ -62,6 +74,7 @@ class Board {
         }
     }
 
+    // Метод по перемещению выбранной фигуры. За ходом пользователя следует ход ИИ.
     private fun moveTheStuff(chessPiece: ChessPiece, screenX: Float, screenY: Float) {
         graph.options(chessPiece).forEach {
             if (it !in wolves.map { wolf -> wolf.node } && it != sheep.node) {
@@ -76,6 +89,7 @@ class Board {
         }
     }
 
+    // Метод отрисовки шахматного поля.
     private fun drawBoard(spriteBatch: SpriteBatch) {
         for (row in 0 until cellsAmount) {
             for (column in 0 until cellsAmount) {
@@ -90,9 +104,13 @@ class Board {
         }
     }
 
+    // Отрисовка возможных вариантов хода для выбранной фигуры.
     private fun drawChosen(spriteBatch: SpriteBatch) {
-        val chosenOne: ChessPiece? = if (configuration == Configuration.SHEEP && sheep.touched) { sheep }
-        else { wolves.firstOrNull { it.touched } }
+        val chosenOne: ChessPiece? = if (configuration == Configuration.SHEEP && sheep.touched) {
+            sheep
+        } else {
+            wolves.firstOrNull { it.touched }
+        }
         if (chosenOne != null) {
             val coordinates = countTextureCoordinates(chosenOne.node)
             spriteBatch.draw(chosen, coordinates.first, coordinates.second)
@@ -105,6 +123,7 @@ class Board {
         }
     }
 
+    // Освобождение графических ресурсов.
     fun dispose() {
         brown.dispose()
         ivory.dispose()

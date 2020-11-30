@@ -9,30 +9,32 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
 // Данный класс является реализацией искуственного интеллекта при игре пользователя за волков.
-class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): AI {
+class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>) : AI {
 
-    // Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
-    // оба искуственных интеллекта.
+    /* Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
+    оба искуственных интеллекта.
+    */
     init {
         move()
     }
 
-    // Используется модификация алгоритма из класса WolfAI.
-    // BFS теперь нужен для расстановки весов нод по степени удаления от овечки.
-    // Результат работы функции countCost - сумма данных весов, а также возможные
-    // варианты по достижению конца доски с соответствующими весами.
-    // Если конец доски достижим, овечка стремится туда.
-    // Иначе выбирается минимальная стоимость, означающая близость овечки
-    // к концу доски и наличие множества свободных ходов.
+    /* Используется модификация алгоритма из класса WolfAI.
+    BFS теперь нужен для расстановки весов нод по степени удаления от овечки.
+    Результат работы функции countCost - сумма данных весов, а также возможные
+    варианты по достижению конца доски с соответствующими весами.
+    Если конец доски достижим, овечка стремится туда.
+    Иначе выбирается минимальная стоимость, означающая близость овечки
+    к концу доски и наличие множества свободных ходов.
 
-    // Данный вариант качественно отличается от алгортма Minimax,
-    // предложенного в источниках к курсовой работе, т.к. является гораздо
-    // более производительным, также существена экономия памяти, при этом
-    // результат работы алгоритма приемлем, ИИ побеждает при ошибках пользователя.
-    // При безупречной игре пользователя ИИ проигрывает в 100% случаев.
+    Данный вариант качественно отличается от алгортма Minimax,
+    предложенного в источниках к курсовой работе, т.к. является гораздо
+    более производительным, также существена экономия памяти, при этом
+    результат работы алгоритма приемлем, ИИ побеждает при ошибках пользователя.
+    При безупречной игре пользователя ИИ проигрывает в 100% случаев.
+    */
     override fun move() {
         val wolvesPositions = wolves.map { it.node }.toSet()
-        val turns = graph.optionsForMinimax(sheep.node).filter { it !in wolvesPositions }
+        val turns = graph.options(sheep.node).filter { it !in wolvesPositions }
         playerWon(turns)
         val costs = IntArray(turns.size)
         val ends = IntArray(turns.size) { Int.MAX_VALUE }
@@ -48,8 +50,8 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
             // Случай, когда овечка в 1 ходе от выигрыша.
             if (ends.any { it == 1 }) {
                 val theTurn = turns.firstOrNull {
-                    graph.optionsForMinimax(it).any {
-                        one -> one !in wolvesPositions && one.coordinates.first == 0
+                    graph.options(it).any { one ->
+                        one !in wolvesPositions && one.coordinates.first == 0
                     }
                 } ?: turns.first { it.coordinates.first == 0 && it !in wolvesPositions }
                 sheep.move(theTurn)
@@ -86,8 +88,9 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         }
     }
 
-    // Подсчитываются стоимости перемещения из заданной ноды в каждую
-    // клетку шахматной доски, результат суммируется.
+    /* Подсчитываются стоимости перемещения из заданной ноды в каждую
+    клетку шахматной доски, результат суммируется.
+    */
     private fun countCost(visited: MutableSet<Graph.Node>,
                           toVisit: MutableSet<Graph.Node>,
                           wolvesPositions: Set<Graph.Node>,
@@ -99,9 +102,9 @@ class SheepAI(private val sheep: Sheep, private val wolves: MutableSet<Wolf>): A
         visited.addAll(toVisit)
         val turns = mutableSetOf<Graph.Node>()
         toVisit.forEach {
-            turns.addAll(graph.optionsForMinimax(it))
+            turns.addAll(graph.options(it))
         }
-        val found = turns.filter { one -> one !in wolvesPositions && one !in visited}.toMutableSet()
+        val found = turns.filter { one -> one !in wolvesPositions && one !in visited }.toMutableSet()
         if (found.isEmpty()) return
         costs[index] += found.size * depth
         if (found.any { it.coordinates.first == 0 } && depth < ends[index]) ends[index] = depth
