@@ -70,7 +70,6 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-        implementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion"
-        implementation "org.junit.jupiter:junit-jupiter-api:5.5.1"
+        implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
     }
 }
