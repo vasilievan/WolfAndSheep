@@ -12,7 +12,7 @@ import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 class SheepAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : AI {
 
     /* Овечка всегда ходит первой. Использование init позволяет штатно обрабатывать
-    оба искуственных интеллекта.
+    оба искусственных интеллекта.
     */
     init {
         move()
