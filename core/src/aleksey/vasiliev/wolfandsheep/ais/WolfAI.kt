@@ -8,7 +8,7 @@ import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.playerWon
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.setScreen
 import aleksey.vasiliev.wolfandsheep.screens.TheEnd
 
-// Данный класс является реализацией искуственного интеллекта при игре пользователя за овечку.
+// Данный класс является реализацией искусственного интеллекта при игре пользователя за овечку.
 class WolfAI(private val sheep: Sheep, private val wolves: MutableList<Wolf>) : AI {
 
     /* Класс с данными для обработки исключений. Представлю позицию волков и овечки как пятимерный вектор,

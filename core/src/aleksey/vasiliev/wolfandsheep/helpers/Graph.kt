@@ -4,7 +4,7 @@ import aleksey.vasiliev.wolfandsheep.chesspieces.ChessPiece
 import aleksey.vasiliev.wolfandsheep.chesspieces.Sheep
 import aleksey.vasiliev.wolfandsheep.helpers.ResourseContainer.cellsAmount
 
-/* Граф, необходимый для реализации логики по перемещению фигур, ходов искуственного интелекта,
+/* Граф, необходимый для реализации логики по перемещению фигур, ходов искусственного интеллекта,
 представленный списком смежностей.
 */
 class Graph {
